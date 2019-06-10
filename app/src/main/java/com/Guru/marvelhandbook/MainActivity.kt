@@ -39,12 +39,19 @@ class MainActivity : AppCompatActivity() {
             checkForUpdate()
         }
         fetchRemoteConfig()
+        camerax.setOnClickListener {
+            val intent = Intent().setClassName(packageName,
+                "")
+            startActivity(intent)
+
+        }
     }
 
     override fun onResume() {
         super.onResume()
         hello.text = BuildConfig.VERSION_NAME
     }
+
 fun checkForUpdate()
 {
     // Creates instance of the manager.
@@ -64,17 +71,22 @@ fun checkForUpdate()
                 // Pass the intent that is returned by 'getAppUpdateInfo()'.
                 appUpdateInfo,
                 // Or 'AppUpdateType.FLEXIBLE' for flexible updates.
-                AppUpdateType.FLEXIBLE,
+                if(isFlexible)AppUpdateType.FLEXIBLE
+                        else
+                    AppUpdateType.IMMEDIATE,
                 // The current activity making the update request.
                 this,
                 // Include a request code to later monitor this update request.
                 MY_REQUEST_CODE);
         }
+
+        Toast.makeText(this@MainActivity, "Update Availability "+appUpdateInfo.updateAvailability().toString(), Toast.LENGTH_SHORT).show()
     }
 }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        Toast.makeText(this@MainActivity, "Result Code "+resultCode.toString(), Toast.LENGTH_SHORT).show()
         if (MY_REQUEST_CODE != RESULT_OK) {
             // If the update is cancelled or fails,
             // you can request to start the update again.

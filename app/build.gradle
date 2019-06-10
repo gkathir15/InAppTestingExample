@@ -11,8 +11,8 @@ android {
         applicationId "com.Guru.marvelhandbook"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 2
-        versionName "bistro"
+        versionCode 8
+        versionName "honey dew"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -21,6 +21,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+
+    dynamicFeatures = [":dynamic_feature"]
+
+
 }
 
 dependencies {
