@@ -35,9 +35,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         mFirebaseRemoteConfig.setDefaults(R.xml.te);
        hello.text = BuildConfig.VERSION_NAME
-        update.setOnClickListener{
-            checkForUpdate()
-        }
+        appUpdateManager = AppUpdateManagerFactory.create(baseContext)
+        update.setOnClickListener{ checkForUpdateFLEXIBLE() }
+        update2.setOnClickListener {   checkForUpdateIMMEDIATE() }
         fetchRemoteConfig()
     }
 
@@ -45,10 +45,10 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         hello.text = BuildConfig.VERSION_NAME
     }
-fun checkForUpdate()
+fun checkForUpdateFLEXIBLE()
 {
     // Creates instance of the manager.
-    appUpdateManager = AppUpdateManagerFactory.create(baseContext)
+
 
 // Returns an intent object that you use to check for an update.
      val appUpdateInfoTask = appUpdateManager.appUpdateInfo
@@ -57,7 +57,7 @@ fun checkForUpdate()
     appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
         if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
             // For a flexible update, use AppUpdateType.FLEXIBLE
-            && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+            && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
         ) {
             // Request the update.
             appUpdateManager.startUpdateFlowForResult(
@@ -73,12 +73,40 @@ fun checkForUpdate()
     }
 }
 
+    fun checkForUpdateIMMEDIATE()
+    {
+        // Creates instance of the manager.
+
+
+// Returns an intent object that you use to check for an update.
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+
+// Checks that the platform will allow the specified type of update.
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                // For a flexible update, use AppUpdateType.FLEXIBLE
+                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+            ) {
+                // Request the update.
+                appUpdateManager.startUpdateFlowForResult(
+                    // Pass the intent that is returned by 'getAppUpdateInfo()'.
+                    appUpdateInfo,
+                    // Or 'AppUpdateType.FLEXIBLE' for flexible updates.
+                    AppUpdateType.IMMEDIATE,
+                    // The current activity making the update request.
+                    this,
+                    // Include a request code to later monitor this update request.
+                    MY_REQUEST_CODE);
+            }
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (MY_REQUEST_CODE != RESULT_OK) {
+        if (resultCode != RESULT_OK) {
             // If the update is cancelled or fails,
             // you can request to start the update again.
-            checkForUpdate()
+            //checkForUpdateFLEXIBLE()
                 // Or 'AppUpdateType.FLEXIBLE' for flexible updates.
 
 
