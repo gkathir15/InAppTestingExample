@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "992919619709",
+    "firebase_url": "https://marvelhandbook.firebaseio.com",
+    "project_id": "marvelhandbook",
+    "storage_bucket": "marvelhandbook.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:992919619709:android:33209adec900b675",
+        "android_client_info": {
+          "package_name": "com.Guru.marvelhandbook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "992919619709-tr51l7tff1fmf90sbo76mqstelb41s7s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.Guru.marvelhandbook",
+            "certificate_hash": "4dd8d5ae9c88f6c6b4b85b0e824527b951508d5e"
+          }
+        },
+        {
+          "client_id": "992919619709-jlnlnpmprij6h513p98cb8q1qisit1j9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.Guru.marvelhandbook",
+            "certificate_hash": "7704def0e1d9d6c24a07d1f3664e22c8168dbb57"
+          }
+        },
+        {
+          "client_id": "992919619709-2s1r8jb5idvle22o4k8n8vqvqc8scalm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlvIX-VUmUKJZy3xWFWlYgZPJueYj2k4A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "992919619709-t9en78is9qhphqk8hc4ijhc3456d7hj9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

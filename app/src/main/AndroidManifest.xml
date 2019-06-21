@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.Guru.marvelhandbook">
+          xmlns:dist="http://schemas.android.com/apk/distribution"
+          xmlns:tools="http://schemas.android.com/tools" package="com.Guru.marvelhandbook">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
             android:allowBackup="true"
@@ -8,12 +13,8 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme">
-        <activity
-                android:name=".ScrollingActivity"
-                android:label="@string/title_activity_scrolling"
-                android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:name="com.google.android.play.core.splitcompat.SplitCompatApplication"
+            android:theme="@style/AppTheme" tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -22,5 +23,15 @@
             </intent-filter>
         </activity>
     </application>
+
+
+
+    <!--android:name="com.google.android.play.core.splitcompat.SplitCompatApplication"-->
+
+    <!--<dist:module-->
+            <!--dist:onDemand="true"-->
+            <!--dist:title="camera">-->
+        <!--<dist:fusing include="true"/>-->
+    <!--</dist:module>-->
 
 </manifest>
