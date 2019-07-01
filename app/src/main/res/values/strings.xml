@@ -93,5 +93,8 @@
 
     <string name="title_camera">camera</string>
     <string name="title_lite">lite</string>
+    <string name="title_dynamic_feature">Module Title</string>
+    <string name="title_camera_feature">Camera Module</string>
+    <string name="title_activity_cam">CamActivity</string>
 
 </resources>

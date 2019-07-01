@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -32,11 +33,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var splitInstallManager: SplitInstallManager
     private lateinit var camRequest: SplitInstallRequest
     private lateinit var liteRequest: SplitInstallRequest
-  //  val CamActivity ="com.guru.camera.CamActivity"
-    val liteActivity ="com.guru.lite.LiteActivity"
+//    val CamActivity ="com.Guru.dynamic_feature.CamActivity"
+    val liteActivity ="com.Guru.dynamic_feature.LiteActivity"
     val RECORD_REQUEST_CODE =500
     val camModule = "camera"
-    val liteModule = "lite"
+    val liteModule = "dynamic_feature"
 
 
 
@@ -68,9 +69,12 @@ class MainActivity : AppCompatActivity() {
         splitInstallManager = SplitInstallManagerFactory.create(this)
 
         update.setOnClickListener{ checkForUpdateFLEXIBLE() }
+        update.visibility=View.GONE
+
         update2.setOnClickListener {   checkForUpdateIMMEDIATE() }
-      //  camera.setOnClickListener { openCamera() }
-        camera.visibility = View.INVISIBLE
+        update2.visibility=View.GONE
+//        camera.setOnClickListener { openCamera() }
+        camera.visibility = View.GONE
         assetAct.setOnClickListener { openlite() }
         fetchRemoteConfig()
       //  setupPermissions()
@@ -103,31 +107,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun makeRequest() {
-        ActivityCompat.requestPermissions(this,
-            arrayOf(Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE),
-            RECORD_REQUEST_CODE)
+        requestPermissions(arrayOf(Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE), RECORD_REQUEST_CODE)
+
     }
 
-//    private fun openCamera()
-//    {
-//
-//
-//        if(!splitInstallManager.installedModules.contains(camModule))
-//        {
-//            splitInstallManager.startInstall(camRequest)
-//                .addOnCompleteListener { popupSnackbarForCompleteUpdate("module installed","ok") }
-//                .addOnFailureListener { popupSnackbarForCompleteUpdate("module install failed ","ok") }
-//                .addOnSuccessListener { popupSnackbarForCompleteUpdate("module installed successfully","ok")
-//                    invokeModule(CamActivity)}
-//
-//
-//        }
-//        else
-//        {
-//            invokeModule(CamActivity)
-//        }
-//
-//    }
+    /*private fun openCamera()
+    {
+
+
+        if(!splitInstallManager.installedModules.contains(camModule))
+        {
+            splitInstallManager.startInstall(camRequest)
+                .addOnCompleteListener { popupSnackbarForCompleteUpdate("module installed","ok") }
+                .addOnFailureListener { popupSnackbarForCompleteUpdate("module install failed ","ok") }
+                .addOnSuccessListener { popupSnackbarForCompleteUpdate("module installed successfully","ok")
+                    invokeModule(CamActivity)}
+
+
+        }
+        else
+        {
+            invokeModule(CamActivity)
+        }
+
+    }*/
 
     private fun openlite()
     {
@@ -152,10 +155,27 @@ class MainActivity : AppCompatActivity() {
 
     private fun invokeModule(classname:String)
     {
-        Intent().setClassName(BuildConfig.APPLICATION_ID, classname)
-            .also {
-                startActivity(it)
-            }
+        Intent().setClassName(BuildConfig.APPLICATION_ID, classname).also {startActivity(it)}
+
+
+            // Creates an instance of SplitInstallManager.
+           /* val splitInstallManager = SplitInstallManagerFactory.create(this)
+
+// Creates a request to install a module.
+            val request = SplitInstallRequest
+                    .newBuilder()
+                    // You can download multiple on demand modules per
+                    // request by invoking the following method for each
+                    // module you want to install.
+                    .addModule("dynamic_feature")
+                    .build()
+
+            splitInstallManager
+                // Submits the request to install the module through the
+                // asynchronous startInstall() task. Your app needs to be
+                // in the foreground to submit the request.
+                .startInstall(request)*/
+
     }
 private fun checkForUpdateFLEXIBLE()
 {

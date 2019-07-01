@@ -13,6 +13,8 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
+            dist:onDemand="true"
+            dist:module="true"
             android:name="com.google.android.play.core.splitcompat.SplitCompatApplication"
             android:theme="@style/AppTheme" tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity android:name=".MainActivity">
@@ -22,16 +24,19 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+
+
     </application>
 
 
 
-    <!--android:name="com.google.android.play.core.splitcompat.SplitCompatApplication"-->
 
-    <!--<dist:module-->
-            <!--dist:onDemand="true"-->
-            <!--dist:title="camera">-->
-        <!--<dist:fusing include="true"/>-->
-    <!--</dist:module>-->
+
+    <!--<dist:module
+            dist:onDemand="true"
+            dist:title="camera">
+        <dist:fusing include="true"/>
+    </dist:module>-->
 
 </manifest>

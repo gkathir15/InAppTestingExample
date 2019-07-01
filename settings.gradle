@@ -1,1 +1,1 @@
-include ':app', ':lite'
+include ':app', ':dynamic_feature'/*, ':camera_feature'*/
