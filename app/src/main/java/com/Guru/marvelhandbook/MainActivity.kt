@@ -3,6 +3,7 @@ package com.Guru.marvelhandbook
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
@@ -107,7 +108,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun makeRequest() {
-        requestPermissions(arrayOf(Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE), RECORD_REQUEST_CODE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(arrayOf(Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE), RECORD_REQUEST_CODE)
+        }
 
     }
 
@@ -255,10 +258,12 @@ private fun checkForUpdateFLEXIBLE()
                 Snackbar.LENGTH_INDEFINITE
             )
             snackbar.setAction("RESTART") { appUpdateManager.completeUpdate() }
-            snackbar.setActionTextColor(
-                resources.getColor(R.color.material_grey_100,this.theme)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                snackbar.setActionTextColor(
+                    resources.getColor(R.color.material_grey_100,this.theme)
 
-            )
+                )
+            }
             snackbar.show()
         }
 
