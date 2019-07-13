@@ -1,7 +1,7 @@
 package com.Guru.marvelhandbook
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.google.android.play.core.install.model.AppUpdateType
@@ -12,13 +12,16 @@ import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateManager
 import kotlinx.android.synthetic.main.activity_main.*
 import com.google.android.play.core.install.InstallStateUpdatedListener
-import android.support.v4.view.accessibility.AccessibilityEventCompat.setAction
-import android.support.design.widget.Snackbar
+import androidx.core.view.accessibility.AccessibilityEventCompat.setAction
+import com.google.android.material.snackbar.Snackbar
 import android.view.View
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import android.widget.Toast
-import android.support.annotation.NonNull
+import androidx.annotation.NonNull
+import androidx.core.content.ContextCompat.startActivity
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.play.core.splitinstall.*
+import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,24 +31,120 @@ class MainActivity : AppCompatActivity() {
     var i =0;
     var mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
     var isFlexible = true
+    var dynamicMofule = "musicModule"
+
+    private lateinit var manager : SplitInstallManager
+    private lateinit var listener : SplitInstallStateUpdatedListener
+
+    private  val packageNames =  "com.guru.musicmodule"
+    private  val administrativoClassname =  "com.guru.musicmodule.MusicActivity"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mFirebaseRemoteConfig.setDefaults(R.xml.te);
+        manager =  SplitInstallManagerFactory .create ( this )
+
        hello.text = BuildConfig.VERSION_NAME
         update.setOnClickListener{
             checkForUpdate()
+            //startActivity(Intent(this@MainActivity,DummyActivity::class.java))
+
         }
         fetchRemoteConfig()
+        dynamic.setOnClickListener { loadAndLaunchModule(dynamicMofule) }
+        // listener to know the status of the module
+
+        listener = SplitInstallStateUpdatedListener { state ->
+
+            when (state.status ()) {
+                SplitInstallSessionStatus.DOWNLOADING  -> {
+                    displayLoadingState (state, " Downloading the module $ {state.moduleNames () [ 0 ]} " )
+                }
+                        SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION  -> {
+                    startIntentSender (state.resolutionIntent () ?. intentSender, null , 0 , 0 , 0 )
+                }
+                        SplitInstallSessionStatus.INSTALLED -> {
+                    launchActivity (administrativoClassname)
+                }
+
+                        SplitInstallSessionStatus . INSTALLING -> displayLoadingState (state, " Installing the Module $ {state.moduleNames () [ 0 ]} " )
+
+                    SplitInstallSessionStatus . FAILED -> {
+                        hello.text =  " Error: $ {state.errorCode ()} for module $ {state.moduleNames ()} "
+                    }
+            }
+        }
+
+
+
+    }
+
+    private  fun  displayLogin () {
+        progress.visibility =  View . GONE
+    }
+
+
+    override  fun  onPause () {
+        manager.unregisterListener (listener)
+        super .onPause ()
+    }
+
+
+    private  fun  loadAndLaunchModule ( name :  String ) {
+        updateProgressMessage ( " Loading the Module $ name " )
+        // Skip loading if the module is already installed. Perform success action directly.
+        if (manager.installedModules.contains (name)) {
+            updateProgressMessage ( " It is already installed " )
+            launchActivity (administrativoClassname)
+            displayLogin ()
+            return
+        }
+
+        // Create request to install a feature module by name.
+        val request =  SplitInstallRequest .newBuilder ()
+            .addModule (name)
+            .build ()
+
+        // Load and install the requested feature module.
+        manager.startInstall (request)
+
+        updateProgressMessage ( " Loading! " )
+        progress.visibility = View.VISIBLE
+    }
+
+    private  fun  displayLoadingState (state : SplitInstallSessionState, message :  String ) {
+
+        progress.visibility = View.VISIBLE
+        progress.max = state.totalBytesToDownload (). toInt ()
+        progress.progress = state.bytesDownloaded (). toInt ()
+
+        updateProgressMessage (message)
+    }
+
+
+
+    private  fun  updateProgressMessage ( message :  String ) {
+        if (progress.visibility != View.VISIBLE)
+            hello.text = message
+    }
+
+
+    private  fun  launchActivity ( className :  String ) {
+        Intent () .setClassName (applicationContext, className)
+            . also {
+                startActivity (it)
+            }
     }
 
     override fun onResume() {
         super.onResume()
         hello.text = BuildConfig.VERSION_NAME
+        manager.registerListener (listener)
+        super .onResume ()
     }
-fun checkForUpdate()
+private fun checkForUpdate()
 {
     // Creates instance of the manager.
     appUpdateManager = AppUpdateManagerFactory.create(baseContext)
@@ -127,6 +226,9 @@ fun checkForUpdate()
 
 
     }
+
+
+
 
 
 }
