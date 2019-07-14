@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat.startActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.play.core.splitinstall.*
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     var i =0;
     var mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
     var isFlexible = true
+    var isReinstall = false
     var dynamicMofule = "musicModule"
 
     private lateinit var manager : SplitInstallManager
@@ -54,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         }
         fetchRemoteConfig()
         dynamic.setOnClickListener { loadAndLaunchModule(dynamicMofule) }
+        uninstall.setOnClickListener { unInstallModule() }
         // listener to know the status of the module
 
         listener = SplitInstallStateUpdatedListener { state ->
@@ -67,6 +70,11 @@ class MainActivity : AppCompatActivity() {
                 }
                         SplitInstallSessionStatus.INSTALLED -> {
                     launchActivity (administrativoClassname)
+                            if(isReinstall)
+                            {
+                                isReinstall = false
+                                popupSnackbarForReinstallModule()
+                            }
                 }
 
                         SplitInstallSessionStatus . INSTALLING -> displayLoadingState (state, " Installing the Module $ {state.moduleNames () [ 0 ]} " )
@@ -74,12 +82,56 @@ class MainActivity : AppCompatActivity() {
                     SplitInstallSessionStatus . FAILED -> {
                         hello.text =  " Error: $ {state.errorCode ()} for module $ {state.moduleNames ()} "
                     }
+
             }
         }
 
 
 
+
+
+
+
     }
+
+
+    private fun unInstallModule()
+    {
+        if(manager.installedModules.contains(dynamicMofule))
+        {
+            val installedModules = manager.installedModules.toList()
+            manager.deferredUninstall(installedModules).addOnSuccessListener {
+                Toast.makeText(this,"Uninstalling $installedModules",Toast.LENGTH_LONG).show()
+            }.addOnFailureListener {
+                Toast.makeText(this,"Failed installation of $installedModules",Toast.LENGTH_LONG).show()
+            }
+        }
+        else
+            Toast.makeText(this,"module not installed",Toast.LENGTH_LONG).show()
+
+
+    }
+
+    private fun reInstallModule()
+    {
+        if(manager.installedModules.contains(dynamicMofule)) {
+
+                val installedModules = manager.installedModules.toList()
+                manager.deferredUninstall(installedModules).addOnSuccessListener {
+                    hello.text = "Uninstalling $installedModules"
+                }.addOnFailureListener {
+                    hello.text ="Failed installation of $installedModules"         }
+            }
+
+
+            val request =  SplitInstallRequest .newBuilder ()
+                .addModule (dynamicMofule)
+                .build ()
+            manager.startInstall(request)
+
+
+    }
+
 
     private  fun  displayLogin () {
         progress.visibility =  View . GONE
@@ -200,6 +252,19 @@ private fun checkForUpdate()
             snackbar.show()
         }
 
+    fun popupSnackbarForReinstallModule() {
+        val snackbar = Snackbar.make(
+            findViewById<View>(R.id.root),
+            "Module updated",
+            Snackbar.LENGTH_INDEFINITE
+        )
+        snackbar.setAction("Explore") { view -> launchActivity(administrativoClassname) }
+        snackbar.setActionTextColor(
+            resources.getColor(R.color.material_grey_100)
+        )
+        snackbar.show()
+    }
+
     fun fetchRemoteConfig()
     {
 
@@ -207,10 +272,16 @@ private fun checkForUpdate()
             .addOnCompleteListener(this, OnCompleteListener<Void> { task ->
                 if (task.isSuccessful) {
                     isFlexible = mFirebaseRemoteConfig.getBoolean("isFlexible");
+                    isReinstall = mFirebaseRemoteConfig.getBoolean("isReinstall")
+
+                    if(isReinstall)
+                        reInstallModule()
+
                     Toast.makeText(
                         this@MainActivity, "Fetch Succeeded",
                         Toast.LENGTH_SHORT
                     ).show()
+
 
                     // After config data is successfully fetched, it must be activated before newly fetched
                     // values are returned.

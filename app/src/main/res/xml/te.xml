@@ -5,6 +5,8 @@
         <entry>
             <key>isFlexible</key>
             <value>true</value>
+            <key>isReinstall</key>
+            <value>false</value>
         </entry>
 
     </defaultsMap>
